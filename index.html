@@ -420,22 +420,27 @@
     }
 
     .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 280px));
-      gap: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
       justify-content: center;
       width: 100%;
-      max-width: 1300px;
+      max-width: 100%;
       perspective: 1000px;
+      padding-bottom: 40px;
     }
 
-    /* Card Wrapper with Actions */
+    /* Card Wrapper with Actions - Dynamic layout sizing based on scale prevents any overlap */
     .card-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      transition: transform 0.2s ease;
+      width: calc(256px * var(--card-scale, 1));
+      height: calc(389px * var(--card-scale, 1) + 42px);
+      flex-shrink: 0;
+      position: relative;
+      transition: width 0.15s ease, height 0.15s ease;
     }
 
     .card-actions {
@@ -465,7 +470,7 @@
       overflow: hidden;
       position: relative;
       user-select: none;
-      transform-origin: center center;
+      transform-origin: top center;
       transition: transform 0.1s ease-out, box-shadow 0.2s ease;
       color: #000000;
     }
@@ -1480,11 +1485,12 @@
 
       if (viewMode === 'focus') {
         const showcaseWrapper = document.createElement('div');
-        showcaseWrapper.style.gridColumn = '1 / -1';
+        showcaseWrapper.style.width = '100%';
         showcaseWrapper.style.display = 'flex';
         showcaseWrapper.style.flexDirection = 'column';
         showcaseWrapper.style.alignItems = 'center';
-        showcaseWrapper.style.gap = '16px';
+        showcaseWrapper.style.gap = '20px';
+        showcaseWrapper.style.paddingTop = '10px';
 
         const navRow = document.createElement('div');
         navRow.style.display = 'flex';
@@ -2122,6 +2128,7 @@
       scaleSlider.addEventListener('input', (e) => {
         currentScale = parseFloat(e.target.value);
         scaleVal.textContent = `${Math.round(currentScale * 100)}%`;
+        document.documentElement.style.setProperty('--card-scale', currentScale);
         document.querySelectorAll('.topps-card').forEach(card => {
           card.style.transform = `scale(${currentScale})`;
         });
